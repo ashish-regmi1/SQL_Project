@@ -46,7 +46,7 @@ const Books = () => {
     <div>
       <h1> Book shop</h1>
       
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
         {/* Filter inputs and button on the top right */}
         <input
           type="text"
