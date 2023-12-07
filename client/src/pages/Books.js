@@ -1,55 +1,93 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
-import { Link } from 'react-router-dom'
-
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const Books = () => {
+  const [books, setBooks] = useState([]);
+  const [filteredBooks, setFilteredBooks] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+  const [minPrice, setMinPrice] = useState('');
 
-  const [books,setBooks]=useState([])
-
-  useEffect(()=>{
-    const fetchAllBooks=async()=>{
-      try{
-        const res=await axios.get("http://localhost:8800/books")
+  useEffect(() => {
+    const fetchAllBooks = async () => {
+      try {
+        const res = await axios.get("http://localhost:8800/books");
         setBooks(res.data);
-      }catch(err){
-        console.log(err)
+      } catch (err) {
+        console.log(err);
       }
-    }
-    fetchAllBooks()
-  },[])
+    };
 
-  const handleDelete=async(id)=>{
-    try{
-      await axios.delete("http://localhost:8800/books/"+id)
-      window.location.reload()
-    }catch(err){
+    fetchAllBooks();
+  }, []);
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:8800/books/${id}`);
+      // Update the state to remove the deleted book
+      setBooks((prevBooks) => prevBooks.filter((book) => book.id !== id));
+    } catch (err) {
       console.log(err);
     }
-  }
+  };
+
+  // Function to handle book filtering
+  const handleFilter = () => {
+    const filtered = books.filter((book) =>
+      book.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (!maxPrice || book.price <= parseFloat(maxPrice)) &&
+      (!minPrice || book.price >= parseFloat(minPrice))
+    );
+    setFilteredBooks(filtered);
+  };
+
   return (
     <div>
       <h1> Book shop</h1>
+      
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
+        {/* Filter inputs and button on the top right */}
+        <input
+          type="text"
+          placeholder="Search by book name"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <input
+          type="number"
+          placeholder="Min Price"
+          value={minPrice}
+          onChange={(e) => setMinPrice(e.target.value)}
+        />
+        <input
+          type="number"
+          placeholder="Max Price"
+          value={maxPrice}
+          onChange={(e) => setMaxPrice(e.target.value)}
+        />
+        <button onClick={handleFilter}>Filter</button>
+      </div>
+      
       <div className='books'>
-        {books.map((book)=>(
+        {/* Display filtered books if available, otherwise display all books */}
+        {(filteredBooks.length > 0 ? filteredBooks : books).map((book) => (
           <div className="book" key={book.id}>
-            {/* {book.cover && <img src="https://imgs.search.brave.com/iNdia1bD3rKW8UvKjZco-enuBdhhU3oJ4p0ropyYfjw/rs:fit:500:0:0/g:ce/aHR0cHM6Ly9jZG4u/cGl4YWJheS5jb20v/cGhvdG8vMjAxNS8w/Ny8wNS8xMC8xOC90/cmVlLTgzMjA3OV82/NDAuanBn" alt="" />} */}
             {book.cover && <img src={book.cover} alt="" />}
             <h2>{book.title}</h2>
             <p>{book.desc}</p>
             <span>{book.price}</span>
-           <button className="delete" onClick={()=>handleDelete(book.id)}>Delete</button>
-           <button className="update"><Link to={`/update/${book.id}`}>Update</Link></button>
-
-
+            <button className="delete" onClick={() => handleDelete(book.id)}>Delete</button>
+            <button className="update"><Link to={`/update/${book.id}`}>Update</Link></button>
           </div>
         ))}
       </div>
+
       <button>
         <Link to="/add">Add new book</Link>
       </button>
     </div>
-  )
-}
+  );
+};
 
-export default Books
+export default Books;

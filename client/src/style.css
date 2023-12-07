@@ -41,7 +41,7 @@ img{
     border:1px solid gray;
     color: rgb(170, 170, 225);
 }
-
+ 
 .form{
     display: flex;
     flex-direction: column;

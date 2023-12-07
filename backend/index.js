@@ -9,7 +9,7 @@ const db=mysql.createConnection({
     user:"root",
     password:"Ashish",
     database:"project"
-});
+}); 
 
 app.use(express.json())
 app.use(cors())

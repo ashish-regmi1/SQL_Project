@@ -9,7 +9,7 @@ const Update = () => {
     price:null,
     cover:"",
   })
-
+ 
   const navigate=useNavigate()
   const location=useLocation()
   

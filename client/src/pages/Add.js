@@ -8,7 +8,7 @@ const Add = () => {
     desc:"",
     price:null,
     cover:"",
-  })
+  }) 
 
   const navigate=useNavigate()
   const handleChange=(e)=>{
